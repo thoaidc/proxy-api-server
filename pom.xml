@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.dct</groupId>
+    <artifactId>proxy-api-server</artifactId>
+    <version>0.0.1</version>
+    <name>proxy-api-server</name>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.4.5</version>
+        <relativePath/> <!-- Lookup parent from MAVEN repository -->
+    </parent>
+
+    <properties>
+        <maven.version>3.9.11</maven.version>
+        <java.version>21</java.version>
+        <directory>${project.basedir}/target</directory>
+        <profiles.active>dev</profiles.active>
+        <spring-boot.version>3.4.5</spring-boot.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <main-start-class>com.dct.proxy.ProxyApiServerApplication</main-start-class>
+
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.clean-plugin.version>3.4.1</maven.clean-plugin.version>
+        <maven.spotless-plugin.version>2.46.1</maven.spotless-plugin.version>
+        <maven.enforcer-plugin.version>3.5.0</maven.enforcer-plugin.version>
+        <maven.compiler-plugin.version>3.14.0</maven.compiler-plugin.version>
+        <maven.javadoc-plugin.version>3.6.0</maven.javadoc-plugin.version>
+        <maven.resources-plugin.version>3.3.1</maven.resources-plugin.version>
+        <maven.surefire-plugin.version>3.5.3</maven.surefire-plugin.version>
+        <maven.artifact-transfer.version>0.13.1</maven.artifact-transfer.version>
+
+        <jackson.datatype.version>2.15.3</jackson.datatype.version>
+    </properties>
+
+    <dependencies>
+        <!-- Spring Boot Web -->
+        <!--suppress VulnerableLibrariesLocal -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.resilience4j</groupId>
+            <artifactId>resilience4j-spring-boot3</artifactId>
+            <version>2.2.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.resilience4j</groupId>
+            <artifactId>resilience4j-circuitbreaker</artifactId>
+            <version>2.2.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.resilience4j</groupId>
+            <artifactId>resilience4j-timelimiter</artifactId>
+            <version>2.2.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jdk8</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <profiles.active>dev</profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <profiles.active>prod</profiles.active>
+            </properties>
+        </profile>
+    </profiles>
+
+    <build>
+        <plugins>
+            <!-- Spring Boot build JAR -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot.version}</version>
+
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.shared</groupId>
+                        <artifactId>maven-artifact-transfer</artifactId>
+                        <version>${maven.artifact-transfer.version}</version>
+                    </dependency>
+
+                    <dependency>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-loader-tools</artifactId>
+                        <version>${spring-boot.version}</version>
+                    </dependency>
+
+                    <dependency>
+                        <groupId>org.sonatype.plexus</groupId>
+                        <artifactId>plexus-build-api</artifactId>
+                        <version>0.0.7</version>
+                    </dependency>
+                </dependencies>
+
+                <configuration>
+                    <layers>
+                        <enabled>true</enabled>
+                    </layers>
+                    <additionalProperties>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                        <environment>${profiles.active}</environment>
+                    </additionalProperties>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <id>repackage</id>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>build-info</id>
+                        <goals>
+                            <goal>build-info</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Build JAR -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                        </manifest>
+                    </archive>
+
+                    <!-- Packaged with all class and custom configuration files and shared resources -->
+                    <includes>
+                        <include>**/*.class</include>
+                        <include>logback/**</include>
+                        <include>i18n/**</include>
+                        <include>config/**</include>
+                        <include>META-INF/**</include>
+                    </includes>
+                </configuration>
+            </plugin>
+
+            <!-- Maven clean project -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>${maven.clean-plugin.version}</version>
+            </plugin>
+
+            <!-- Auto format code -->
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>${maven.spotless-plugin.version}</version>
+                <configuration>
+                    <java>
+                        <removeUnusedImports/>
+                        <trimTrailingWhitespace/>
+                        <endWithNewline/>
+                    </java>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>spotless</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>apply</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Config build rules -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${maven.enforcer-plugin.version}</version>
+
+                <executions>
+                    <!-- Execute main rules (Java version, Maven version) -->
+                    <execution>
+                        <id>enforce-versions</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                    </execution>
+
+                    <!-- Check if dependencies are pulled in multiple versions (dependency convergence) -->
+                    <execution>
+                        <id>enforce-dependencyConvergence</id>
+                        <configuration>
+                            <rules>
+                                <DependencyConvergence/>
+                            </rules>
+
+                            <!-- Don't fail build, just warn if there is an error -->
+                            <fail>false</fail>
+                        </configuration>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                    </execution>
+                </executions>
+
+                <configuration>
+                    <rules>
+                        <!-- Required minimum Maven is the specified version -->
+                        <requireMavenVersion>
+                            <message>You are running an older version. Requires at least Maven ${maven.version}</message>
+                            <version>[${maven.version},)</version>
+                        </requireMavenVersion>
+
+                        <!-- Only allow building with JDK 17 or 21 -->
+                        <requireJavaVersion>
+                            <message>You are running an incompatible version of Java. Supports JDK 21+</message>
+                            <version>[21,24)</version>
+                        </requireJavaVersion>
+                    </rules>
+                </configuration>
+            </plugin>
+
+            <!-- Compiler config -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compiler-plugin.version}</version>
+
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <compilerArgument>-parameters</compilerArgument>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.springframework.boot</groupId>
+                            <artifactId>spring-boot-configuration-processor</artifactId>
+                            <version>${spring-boot.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+
+            <!-- Config handle resources -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven.resources-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <!-- Executed in the validate phase, very early in the build process -->
+                        <id>config-resources</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+
+                        <configuration>
+                            <!-- Destination directory, usually where Spring Boot reads resources -->
+                            <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                            <!-- Turn off default separator (${...}, @...@) -->
+                            <useDefaultDelimiters>false</useDefaultDelimiters>
+                            <!-- Specify the delimiter as #...# (avoid conflict with Spring's ${...}) -->
+                            <delimiters>
+                                <delimiter>#</delimiter>
+                            </delimiters>
+
+                            <!-- Resource configuration to be copied -->
+                            <resources>
+                                <resource>
+                                    <!-- Source directory -->
+                                    <directory>src/main/resources/</directory>
+                                    <!-- Disable variable filtering in files -->
+                                    <filtering>true</filtering>
+                                    <!-- Copy only the files specified in directories below. Excluded files below, avoid duplicate -->
+                                    <includes>
+                                        <include>i18n/*.properties</include>
+                                        <include>logback/*.xml</include>
+                                        <include>META-INF/**</include>
+                                    </includes>
+                                    <excludes>
+                                        <exclude>config/*.yml</exclude>
+                                    </excludes>
+                                </resource>
+
+                                <!-- Separate filters for config files -->
+                                <resource>
+                                    <!-- Source directory -->
+                                    <directory>src/main/resources/</directory>
+                                    <!-- Enable variable filtering in files -->
+                                    <!-- Maven will scan the copied files and replace variables in the format ${...} -->
+                                    <!-- with the corresponding values from pom.xml or .properties configuration file -->
+                                    <filtering>true</filtering>
+                                    <!-- Copy only the files specified in the directory below -->
+                                    <includes>
+                                        <include>config/*.yml</include>
+                                        <include>config/*.properties</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Config run test -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven.surefire-plugin.version}</version>
+                <configuration>
+                    <skipTests>true</skipTests>
+                    <testFailureIgnore>true</testFailureIgnore>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

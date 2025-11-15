@@ -1,0 +1,6 @@
+com.dct.proxy.config.DataConverterAutoConfiguration
+com.dct.proxy.config.LocaleAutoConfiguration
+com.dct.proxy.config.GlobalExceptionHandlerAutoConfiguration
+com.dct.proxy.config.HttpClientAutoConfiguration
+com.dct.proxy.config.ResponseTranslationAutoConfiguration
+com.dct.proxy.config.CircuitBreakerAutoConfiguration

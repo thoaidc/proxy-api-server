@@ -1,0 +1,70 @@
+# ===================================================================
+# Spring Boot configuration.
+#
+# This configuration will be overridden by the Spring profile you use
+# For example: application-dev.yml if you use the "dev" profile.
+# ===================================================================
+
+# ===================================================================
+# Standard Spring Boot properties.
+# Full reference is available at:
+# https://docs.spring.io/spring-boot/reference/features/profiles.html
+# ===================================================================
+
+logging:
+  level:
+    root: debug
+    com.dct.proxy: debug
+    org.springframework.security: debug
+  charset:
+    console: UTF-8
+    file: UTF-8
+  file:
+    path: opt/logs
+
+server:
+  servlet:
+    session:
+      cookie:
+        # The session cookie that Spring Boot creates will have the HttpOnly attribute
+        # Setting HttpOnly helps protect cookies from Cross-Site Scripting (XSS) attacks
+        # Cookies will still be sent with each HTTP request (and can therefore be used for session authentication)
+        # But Cookies cannot be accessed from the client side using JavaScript (e.g. via document.cookie)
+        http-only: true
+  port: 8888
+
+app:
+  http-client:
+    rest-template: enabled
+    default-connect-timeout: 5000 # 5s
+    default-read-timeout: 5000    # 5s
+    circuit-breaker:
+      activate: enabled
+      slowCallDurationThreshold: 2  # If request call > 2s → considered slow
+      slowCallRateThreshold: 75     # If ≥75% of calls are delayed → open circuit
+      slidingWindowSize: 5          # Use a sliding window of size 5 most recent calls to calculate the error
+      minimumNumberOfCalls: 3       # Only start evaluating errors after at least 3 requests
+      # When circuit breaker opens → after timeout → switches to half-open state, allowing 3 retry requests for testing
+      permittedNumberOfCallsInHalfOpenState: 3
+      waitDurationInOpenState: 10   # When circuit is open, wait 10s before allowing retry
+      # After waitDurationInOpenState, automatically switch from open to half-open (no new request required)
+      automaticTransitionFromOpenToHalfOpenEnabled: true
+      failureRateThreshold: 50      # If error rate > 50% in slidingWindowSize → open circuit (disconnect)
+      connect-timeout: 5000         # Overwrite `default-connect-timeout` value when Circuit Breaker is enabled
+      read-timeout: 5000            # Overwrite `default-read-timeout` value when Circuit Breaker is enabled
+
+      retry:
+        activate: enabled
+        retryMaxAttempts: 3
+        retryWaitDuration: 1000
+
+      time-limiter:
+        activate: enabled
+        cancel-running-future: true
+        overall-timeout: 10000
+
+  i18n:
+    base-names:
+      - classpath:i18n/messages
+      - classpath:i18n/base_messages
+    encoding: UTF-8

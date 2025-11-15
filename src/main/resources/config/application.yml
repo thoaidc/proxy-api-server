@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: proxy-api-server
+  jackson:
+    time-zone: UTC
+  profiles:
+    active: "@profiles.active@"

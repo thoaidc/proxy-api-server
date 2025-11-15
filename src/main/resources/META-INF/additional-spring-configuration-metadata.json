@@ -1,0 +1,14 @@
+{
+  "properties": [
+    {
+      "name": "app.datasource",
+      "type": "com.dct.proxy.constants.ActivateStatus",
+      "description": "Description for app.datasource."
+    },
+    {
+      "name": "app.jpa-auditing",
+      "type": "com.dct.proxy.constants.ActivateStatus",
+      "description": "Description for app.jpa-auditing."
+    }
+  ]
+}
