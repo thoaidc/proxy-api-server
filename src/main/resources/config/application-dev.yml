@@ -36,8 +36,8 @@ server:
 app:
   http-client:
     rest-template: enabled
-    default-connect-timeout: 5000 # 5s
-    default-read-timeout: 5000    # 5s
+    default-connect-timeout: 15000 # 15s
+    default-read-timeout: 30000    # 30s
     circuit-breaker:
       activate: enabled
       slowCallDurationThreshold: 2  # If request call > 2s → considered slow
@@ -50,8 +50,8 @@ app:
       # After waitDurationInOpenState, automatically switch from open to half-open (no new request required)
       automaticTransitionFromOpenToHalfOpenEnabled: true
       failureRateThreshold: 50      # If error rate > 50% in slidingWindowSize → open circuit (disconnect)
-      connect-timeout: 5000         # Overwrite `default-connect-timeout` value when Circuit Breaker is enabled
-      read-timeout: 5000            # Overwrite `default-read-timeout` value when Circuit Breaker is enabled
+      connect-timeout: 15000        # Overwrite `default-connect-timeout` value when Circuit Breaker is enabled
+      read-timeout: 30000           # Overwrite `default-read-timeout` value when Circuit Breaker is enabled
 
       retry:
         activate: enabled
