@@ -68,3 +68,19 @@ app:
       - classpath:i18n/messages
       - classpath:i18n/base_messages
     encoding: UTF-8
+
+  interceptors:
+    activate: enabled
+    chain:
+      - name: com.dct.proxy.interceptor.ProxyRequestInterceptor
+        included-patterns:
+          - /api/**
+          - /api/p/**
+        excluded-patterns:
+          - /file/**
+          - /static/**
+
+  server:
+    host: http://14.225.17.199:8888
+    pharma-integration-host: http://103.124.60.251:8080
+    proxy-api: /api/proxy

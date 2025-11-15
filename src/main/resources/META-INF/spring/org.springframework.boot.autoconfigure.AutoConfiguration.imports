@@ -4,3 +4,4 @@ com.dct.proxy.config.GlobalExceptionHandlerAutoConfiguration
 com.dct.proxy.config.HttpClientAutoConfiguration
 com.dct.proxy.config.ResponseTranslationAutoConfiguration
 com.dct.proxy.config.CircuitBreakerAutoConfiguration
+com.dct.proxy.config.InterceptorAutoConfiguration

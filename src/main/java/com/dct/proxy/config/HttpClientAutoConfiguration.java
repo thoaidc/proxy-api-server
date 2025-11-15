@@ -2,6 +2,7 @@ package com.dct.proxy.config;
 
 import com.dct.proxy.config.properties.CircuitBreakerProps;
 import com.dct.proxy.config.properties.HttpClientProps;
+import com.dct.proxy.config.properties.ServerProxyProperties;
 import com.dct.proxy.constants.BasePropertiesConstants;
 import com.dct.proxy.interceptor.BaseCircuitBreakerRestTemplateInterceptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,7 +30,7 @@ import static com.dct.proxy.constants.ActivateStatus.ENABLED_VALUE;
  */
 @AutoConfiguration
 @ConditionalOnProperty(name = BasePropertiesConstants.ENABLED_REST_TEMPLATE, havingValue = ENABLED_VALUE)
-@EnableConfigurationProperties(HttpClientProps.class)
+@EnableConfigurationProperties({HttpClientProps.class, ServerProxyProperties.class})
 public class HttpClientAutoConfiguration {
     private static final Logger log = LoggerFactory.getLogger(HttpClientAutoConfiguration.class);
     private final ObjectMapper objectMapper;

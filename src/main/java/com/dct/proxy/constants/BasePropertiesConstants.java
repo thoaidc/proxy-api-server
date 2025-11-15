@@ -42,6 +42,8 @@ public interface BasePropertiesConstants {
     String SECURITY_OAUTH2_CONFIG = "app.security.oauth2";
     String ENABLED_OAUTH2 = "app.security.oauth2.activate";
 
+    String SERVER_PROXY_CONFIG = "app.server";
+
     String HTTP_CLIENT_CONFIG = "app.http-client";
     String CIRCUIT_BREAKER_CONFIG = "app.http-client.circuit-breaker";
     String CIRCUIT_BREAKER_RETRY_CONFIG = "app.http-client.circuit-breaker.retry";

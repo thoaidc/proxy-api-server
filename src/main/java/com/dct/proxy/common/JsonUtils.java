@@ -134,6 +134,26 @@ public class JsonUtils {
     }
 
     /**
+     * Parse JSON content into a specific class type.
+     *
+     * @param jsonString  JSON string to parse
+     * @param typeRef Type preference to parse into
+     * @param <T>         Type of the desired object
+     * @return Parsed object of type T or null on error
+     */
+    public static <T> T parseJson(String jsonString, TypeReference<T> typeRef) {
+        if (StringUtils.hasText(jsonString)) {
+            try {
+                return objectMapper.readValue(jsonString, typeRef);
+            } catch (JsonProcessingException e) {
+                log.error("[INVALID_JSON_FORMAT] - When parse objects from string: {}, {}", jsonString, e.getMessage());
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Parse JSON content into a specific class type
      *
      * @param jsonString  JSON string to parse
