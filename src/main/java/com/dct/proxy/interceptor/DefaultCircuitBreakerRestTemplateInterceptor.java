@@ -19,7 +19,7 @@ import java.util.function.Supplier;
 
 /**
  * Default implementation of {@link BaseCircuitBreakerRestTemplateInterceptor} that applies
- * Resilience4j's {@link CircuitBreaker},
+ * Resilience 4j's {@link CircuitBreaker},
  * {@link Retry}, and {@link TimeLimiter}
  * to outgoing HTTP requests made with {@link org.springframework.web.client.RestTemplate}
  *
@@ -68,9 +68,9 @@ public class DefaultCircuitBreakerRestTemplateInterceptor extends BaseCircuitBre
     /**
      * Creates a default RestTemplate interceptor with Circuit Breaker, optional TimeLimiter, and optional Retry.
      *
-     * @param circuitBreaker the Resilience4j CircuitBreaker instance (required)
-     * @param timeLimiter    optional Resilience4j TimeLimiter instance (nullable)
-     * @param retry          optional Resilience4j Retry instance (nullable)
+     * @param circuitBreaker the Resilience 4j CircuitBreaker instance (required)
+     * @param timeLimiter    optional Resilience 4j TimeLimiter instance (nullable)
+     * @param retry          optional Resilience 4j Retry instance (nullable)
      */
     public DefaultCircuitBreakerRestTemplateInterceptor(CircuitBreaker circuitBreaker,
                                                         @Nullable TimeLimiter timeLimiter,
@@ -149,7 +149,7 @@ public class DefaultCircuitBreakerRestTemplateInterceptor extends BaseCircuitBre
 
             try {
                 ClientHttpResponse response = execution.execute(request, body);
-                log.debug("[CB_REST_TEMPLATE] - Received: {} {}", response.getStatusCode(), response.getStatusText());
+                log.debug("[CB_REST_TEMPLATE] - Received: {}", response.getStatusCode());
                 return response;
             } catch (IOException e) {
                 log.error("[CB_REST_TEMPLATE] - IOException occurred: {}", e.getMessage(), e);
